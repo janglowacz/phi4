@@ -83,19 +83,6 @@ class Lattice:
                 self.Tried += 1
         if Save: self.History.append(self.Phi.copy())
 
-    # Method to calculate the change in action (very advanced, produces weird behaviour)
-    def Delta_S_Old(self, x, Delta_Phi, J=0):
-        new_Phi = self.Phi[x] + Delta_Phi
-        Delta_Mass_term = (2 * self.Phi[x] + Delta_Phi) * Delta_Phi
-        Delta_Four_term = self.Lambda / 24 * (np.power(new_Phi,4) - np.power(self.Phi[x],4))
-        Delta_Kin_term = np.sum(-1 / np.square(self.Spacing)) * Delta_Mass_term
-        Delta_J_term = J * (Delta_Phi)
-        for i in range(self.Shape.size):
-            shift = np.zeros(self.Shape.size)
-            shift[i] = 1
-            Delta_Kin_term += Delta_Phi / np.square(self.Spacing[i]) * (self.Phi[tuple(((x + shift)%self.Shape).astype(int))] + self.Phi[tuple(((x - shift)%self.Shape).astype(int))])
-        return (self.M_squared/2 * Delta_Mass_term + Delta_Four_term - Delta_Kin_term/2 - Delta_J_term) * np.prod(self.Spacing)
-
     # Method to calculate the change in action (actually works)
     def Delta_S(self, x, Delta_Phi, J=0):
         new_Phi = self.Phi[x] + Delta_Phi
@@ -168,14 +155,27 @@ class Lattice:
         d, a, m, l = self.Shape.size, np.square(self.Spacing[0]), self.M_squared, self.Lambda       
         if l == 0:
             self.Kappa = np.ones(2) / (a*m + 2*d)
-            self.Alpha = np.ones(2) * l * np.square(self.Kappa[0] * a) / ( 6 * d )
+            self.Alpha = np.ones(2) * l * np.square(self.Kappa[0] * a) / ( 6 )
         else:
             self.Kappa = np.zeros(2)
             self.Kappa[0] = - ( 3*a*m + np.sqrt( 3*np.square(a)*( 4*l + 3*np.square(m) ) + 36*a*d*m + 36*np.square(d) ) +6*d ) / ( 2*np.square(a)*l )
             self.Kappa[1] = - ( 3*a*m - np.sqrt( 3*np.square(a)*( 4*l + 3*np.square(m) ) + 36*a*d*m + 36*np.square(d) ) +6*d ) / ( 2*np.square(a)*l )
             self.Alpha = np.zeros(2)
-            self.Alpha[0] = l * np.square(self.Kappa[0] * a) / ( 6 * d )
-            self.Alpha[1] = l * np.square(self.Kappa[1] * a) / ( 6 * d )
+            self.Alpha[0] = l * np.square(self.Kappa[0] * a) / ( 6 )
+            self.Alpha[1] = l * np.square(self.Kappa[1] * a) / ( 6 )
+
+    def calc_better_stuff(self):
+        d, a, m, l = self.Shape.size, np.square(self.Spacing[0]), self.M_squared, self.Lambda       
+        if l == 0:
+            self.Kappa = np.ones(2) / (a*m + 8)
+            self.Alpha = np.ones(2) * l * np.square(self.Kappa[0]) / ( 6 )
+        else:
+            self.Kappa = np.zeros(2)
+            self.Kappa[0] = 2*np.sqrt(3) / (np.sqrt(3)*(a*m+8) + np.sqrt(3*np.square(a)+48*a+4*(l+48)))
+            self.Kappa[1] = 2*np.sqrt(3) / (np.sqrt(3)*(a*m+8) - np.sqrt(3*np.square(a)+48*a+4*(l+48)))
+            self.Alpha = np.zeros(2)
+            self.Alpha[0] = l * np.square(self.Kappa[0]) / ( 6 )
+            self.Alpha[1] = l * np.square(self.Kappa[1]) / ( 6 )
 
     # Method to perform 1 sweep over the lattice
     def Sweep_ALT(self, Dmax, Steps=1, Save=False, sampling="uniform"):
