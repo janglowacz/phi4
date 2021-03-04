@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
+import Utility
+
 class Lattice:
     Accepted = 0
     Tried = 0
@@ -121,7 +123,7 @@ class Lattice:
 
     # Method to calculate the two-point correlator of the current field
     def two_Point_Correlator(self, t, phi = None):
-        if phi == None: phi = self.Phi
+        if not type(phi) == np.ndarray: phi = self.Phi
         Phi_Zero = phi[tuple([0]*self.Shape.size)]
         RET = 0
         for x, _ in np.ndenumerate(phi[0]):
@@ -130,10 +132,30 @@ class Lattice:
 
     # Method to calculate the two-point correlator of the current field, averaged over all time values
     def two_Point_Average(self, t, phi = None):
-        if phi == None: phi = self.Phi
+        if not type(phi) == np.ndarray: phi = self.Phi
         RET = 0
         shift = np.zeros(self.Shape.size)
         shift[0] = t
         for x, _ in np.ndenumerate(phi):
             RET += phi[x] * phi[tuple(((x + shift)%self.Shape).astype(int))]
         return RET / self.Shape[0]
+
+    # Method to calculate the average and error of all possible two point correlators
+    def two_Point_Corr_Full(self, Tracker = None):
+        t_s = np.linspace(0, self.Size[0]//2, self.Shape[0]//2+1)
+        TPC = np.zeros([t_s.size, len(self.History)])
+        if not Tracker == None:
+            runs = len(self.History)*len(t_s)
+            Tracker.START()
+        for i in range(len(self.History)):
+            for t in range(len(t_s)):
+                if not Tracker == None: Tracker.FLUSH(t+(i*len(t_s)), runs)
+                TPC[t, i] = self.two_Point_Average(t, phi = self.History[i])
+        if not Tracker == None:
+            Tracker.FLUSH_Final(runs, runs)
+            print()
+        TP = TPC.mean(axis = 1)
+        TP = TP / TPC.mean(axis = 1)[0]
+        TPE = np.array([Utility.bootstrap(TPC[t,:], 10000) for t in range(len(t_s))])
+        TPE = TPE / TPC.mean(axis = 1)[0]
+        return TP, TPE
