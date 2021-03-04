@@ -179,7 +179,7 @@ class Lattice:
             self.Alpha[1] = l * np.square(self.Kappa[1] * a) / ( 6 )
 
     def calc_other_stuff(self):
-        d, a, m, l = self.Shape.size, np.square(self.Spacing[0]), self.M_squared, self.Lambda       
+        a, m, l =  np.square(self.Spacing[0]), self.M_squared, self.Lambda       
         if l == 0:
             self.Kappa = np.ones(2) / (a*m + 8)
             self.Alpha = np.ones(2) * l * np.square(self.Kappa[0]) / ( 6 )
