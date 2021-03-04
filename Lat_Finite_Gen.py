@@ -10,7 +10,10 @@ saveformat = '.pdf'
 
 verbose = True
 
-N_s = np.linspace(20,20,1)
+start = 20
+stop = 20
+
+N_s = np.linspace(start, stop,  stop - start + 1)
 
 for N in N_s:
     print()
