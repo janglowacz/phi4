@@ -179,6 +179,7 @@ class Lattice:
             self.Alpha[1] = l * np.square(self.Kappa[1] * a) / ( 6 )
 
     def calc_other_stuff(self):
+        if not self.Shape.size == 4: raise Exception("You are trying to run code that only works in 4dim on a " + str(self.Shape.size)+"dim Lattice")
         a, m, l =  np.square(self.Spacing[0]), self.M_squared, self.Lambda       
         if l == 0:
             self.Kappa = np.ones(2) / (a*m + 8)
@@ -203,6 +204,26 @@ class Lattice:
 
                 # Determine the change in the action
                 Delta_S = self.Delta_S_ALT(x, Delta_Phi)
+
+                # Perform the Metropolis-Hastings accept-reject step
+                if Delta_S < 0 or np.random.uniform(0,1) <= np.exp(-Delta_S):
+                    self.Phi[x] += Delta_Phi
+                    self.Accepted += 1
+                self.Tried += 1
+        if Save: self.History.append(self.Phi.copy())
+
+    # Method to perform 1 sweep over the lattice
+    def Sweep_NEW(self, Dmax, Steps=1, Save=False, sampling="uniform"):
+        for x, _ in np.ndenumerate(self.Phi): # Sweep over all lattice sites
+            for _ in range(Steps): # Steps times
+
+                # Execute the Delta_Phi sampling
+                if sampling == "uniform": Delta_Phi = np.random.uniform(-Dmax, Dmax)
+                elif sampling == "gauss": Delta_Phi = np.random.randn() * Dmax
+                else: raise Exception("\'" + str(sampling) + "\' is not a valid sampling type")
+
+                # Determine the change in the action
+                Delta_S = self.Delta_S_NEW(x, Delta_Phi)
 
                 # Perform the Metropolis-Hastings accept-reject step
                 if Delta_S < 0 or np.random.uniform(0,1) <= np.exp(-Delta_S):
