@@ -34,3 +34,12 @@ class Tracker:
         sys.stdout.flush()
     def START(self):
         self.start_time = time.time()
+
+def bootstrap(s,nbs):
+    '''bootstrap algorithm for error estimation
+
+        Input:  trajectory s
+                number of bootstrap elements nbs
+
+        Return: boostrap estimate for the error of mean(s)'''
+    return s[np.random.randint(s.size,size=(nbs,s.size))].mean(axis=1).std()
