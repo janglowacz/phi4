@@ -99,8 +99,8 @@ class Lattice:
 
     # Method to calculate the change in action (Alternative)
     def Delta_S_ALT(self, x, Delta_Phi, J=0, kappa_pm=0):
-        phi = self.Phi * np.sqrt(2*self.Kappa[kappa_pm]) * self.Spacing[0]
-        new_phi = (self.Phi[x] + Delta_Phi) * np.sqrt(2*self.Kappa[kappa_pm]) * self.Spacing[0]
+        phi = self.Phi / ( np.sqrt(2*self.Kappa[kappa_pm]) * self.Spacing[0] )
+        new_phi = (self.Phi[x] + Delta_Phi) / ( np.sqrt(2*self.Kappa[kappa_pm]) * self.Spacing[0] )
         Delta_Nothing_term = (np.square(new_phi) - np.square(phi[x]))
         Delta_Alpha_term = self.Alpha[kappa_pm] * (np.square(np.square(new_phi)-1) - np.square(np.square(phi[x])-1))
         Delta_Kin_term = 0
@@ -110,6 +110,20 @@ class Lattice:
             shift[i] = 1
             Delta_Kin_term += (new_phi - phi[x]) * (phi[tuple(((x + shift)%self.Shape).astype(int))] + phi[tuple(((x - shift)%self.Shape).astype(int))])
         return (Delta_Nothing_term + Delta_Alpha_term - 2*self.Kappa[kappa_pm] * Delta_Kin_term - Delta_J_term) * np.prod(self.Spacing)
+
+    # Method to calculate the change in action (Alternative)
+    def Delta_S_NEW(self, x, Delta_Phi, J=0, kappa_pm=0):
+        phi = self.Phi / np.sqrt(2*self.Kappa[kappa_pm]) * self.Spacing[0]
+        new_phi = (self.Phi[x] + Delta_Phi) / np.sqrt(2*self.Kappa[kappa_pm]) * self.Spacing[0]
+        Delta_Nothing_term = (np.square(new_phi) - np.square(phi[x]))
+        Delta_Alpha_term = self.Alpha[kappa_pm] * (np.square(np.square(new_phi)-1) - np.square(np.square(phi[x])-1))
+        Delta_Kin_term = 0
+        Delta_J_term = J * np.sqrt(2*self.Kappa[kappa_pm])*self.Alpha[kappa_pm] * (new_phi - phi[x])
+        for i in range(self.Shape.size):
+            shift = np.zeros(self.Shape.size)
+            shift[i] = 1
+            Delta_Kin_term += (new_phi - phi[x]) * (phi[tuple(((x + shift)%self.Shape).astype(int))] + phi[tuple(((x - shift)%self.Shape).astype(int))])
+        return (Delta_Nothing_term + Delta_Alpha_term - 2*self.Kappa[kappa_pm] * Delta_Kin_term - Delta_J_term)
 
     # Method to calculate the two-point correlator of the current field
     def two_Point_Correlator(self, t, phi = None):
@@ -164,7 +178,7 @@ class Lattice:
             self.Alpha[0] = l * np.square(self.Kappa[0] * a) / ( 6 )
             self.Alpha[1] = l * np.square(self.Kappa[1] * a) / ( 6 )
 
-    def calc_better_stuff(self):
+    def calc_other_stuff(self):
         d, a, m, l = self.Shape.size, np.square(self.Spacing[0]), self.M_squared, self.Lambda       
         if l == 0:
             self.Kappa = np.ones(2) / (a*m + 8)
