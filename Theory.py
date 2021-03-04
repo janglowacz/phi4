@@ -74,7 +74,7 @@ class Lattice:
                 else: raise Exception("\'" + str(sampling) + "\' is not a valid sampling type")
 
                 # Determine the change in the action
-                Delta_S = self.Delta_S_New(x, Delta_Phi)
+                Delta_S = self.Delta_S(x, Delta_Phi)
 
                 # Perform the Metropolis-Hastings accept-reject step
                 if Delta_S < 0 or np.random.uniform(0,1) <= np.exp(-Delta_S):
@@ -83,43 +83,46 @@ class Lattice:
                 self.Tried += 1
         if Save: self.History.append(self.Phi.copy())
 
-    # Method to calculate the change in action (very simple)
-    def Delta_S(self, x, Delta_Phi):
-        new_Phi = self.Phi[x] + Delta_Phi
-        Delta_Mass_term = self.M_squared/2 * (np.square(new_Phi) - np.square(self.Phi[x]))
-        Delta_Four_term = self.Lambda / 24 * (np.power(new_Phi,4) - np.power(self.Phi[x],4))
-        Delta_Kin_term = 0
-        for i in range(self.Shape.size):
-            shift = np.zeros(self.Shape.size)
-            shift[i] = 1
-            Delta_Kin_term += (np.square(self.Phi[tuple(((x + shift)%self.Shape).astype(int))] - new_Phi) - np.square(self.Phi[tuple(((x + shift)%self.Shape).astype(int))] - self.Phi[x])) / np.square(self.Spacing[i])
-        return (Delta_Mass_term + Delta_Four_term + Delta_Kin_term/2) * np.prod(self.Spacing)
-
     # Method to calculate the change in action (very advanced, produces weird behaviour)
-    def Delta_S_Old(self, x, Delta_Phi):
+    def Delta_S_Old(self, x, Delta_Phi, J=0):
         new_Phi = self.Phi[x] + Delta_Phi
         Delta_Mass_term = (2 * self.Phi[x] + Delta_Phi) * Delta_Phi
         Delta_Four_term = self.Lambda / 24 * (np.power(new_Phi,4) - np.power(self.Phi[x],4))
         Delta_Kin_term = np.sum(-1 / np.square(self.Spacing)) * Delta_Mass_term
+        Delta_J_term = J * (Delta_Phi)
         for i in range(self.Shape.size):
             shift = np.zeros(self.Shape.size)
             shift[i] = 1
             Delta_Kin_term += Delta_Phi / np.square(self.Spacing[i]) * (self.Phi[tuple(((x + shift)%self.Shape).astype(int))] + self.Phi[tuple(((x - shift)%self.Shape).astype(int))])
-        return (self.M_squared/2 * Delta_Mass_term + Delta_Four_term - Delta_Kin_term/2) * np.prod(self.Spacing)
+        return (self.M_squared/2 * Delta_Mass_term + Delta_Four_term - Delta_Kin_term/2 - Delta_J_term) * np.prod(self.Spacing)
 
-    # Method to calculate the change in action (similar to the very simple method, but with an added average)
-    def Delta_S_New(self, x, Delta_Phi):
+    # Method to calculate the change in action (actually works)
+    def Delta_S(self, x, Delta_Phi, J=0):
         new_Phi = self.Phi[x] + Delta_Phi
         Delta_Mass_term = self.M_squared/2 * (np.square(new_Phi) - np.square(self.Phi[x]))
         Delta_Four_term = self.Lambda / 24 * (np.power(new_Phi,4) - np.power(self.Phi[x],4))
         Delta_Kin_term = 0
+        Delta_J_term = J * (Delta_Phi)
         for i in range(self.Shape.size):
             shift = np.zeros(self.Shape.size)
             shift[i] = 1
-            a = (np.square(self.Phi[tuple(((x + shift)%self.Shape).astype(int))] - new_Phi) - np.square(self.Phi[tuple(((x + shift)%self.Shape).astype(int))] - self.Phi[x])) / np.square(self.Spacing[i])
-            b = (np.square(self.Phi[tuple(((x - shift)%self.Shape).astype(int))] - new_Phi) - np.square(self.Phi[tuple(((x - shift)%self.Shape).astype(int))] - self.Phi[x])) / np.square(self.Spacing[i])
-            Delta_Kin_term += (a + b) / 2
-        return (Delta_Mass_term + Delta_Four_term + Delta_Kin_term/2) * np.prod(self.Spacing)
+            Delta_Kin_term += (np.square(self.Phi[tuple(((x + shift)%self.Shape).astype(int))] - new_Phi) - np.square(self.Phi[tuple(((x + shift)%self.Shape).astype(int))] - self.Phi[x])) / np.square(self.Spacing[i])
+            Delta_Kin_term += (np.square(self.Phi[tuple(((x - shift)%self.Shape).astype(int))] - new_Phi) - np.square(self.Phi[tuple(((x - shift)%self.Shape).astype(int))] - self.Phi[x])) / np.square(self.Spacing[i])
+        return (Delta_Mass_term + Delta_Four_term + Delta_Kin_term/2 - Delta_J_term) * np.prod(self.Spacing)
+
+    # Method to calculate the change in action (Alternative)
+    def Delta_S_ALT(self, x, Delta_Phi, J=0, kappa_pm=0):
+        phi = self.Phi * np.sqrt(2*self.Kappa[kappa_pm]) * self.Spacing[0]
+        new_phi = (self.Phi[x] + Delta_Phi) * np.sqrt(2*self.Kappa[kappa_pm]) * self.Spacing[0]
+        Delta_Nothing_term = (np.square(new_phi) - np.square(phi[x]))
+        Delta_Alpha_term = self.Alpha[kappa_pm] * (np.square(np.square(new_phi)-1) - np.square(np.square(phi[x])-1))
+        Delta_Kin_term = 0
+        Delta_J_term = J * np.sqrt(2*self.Kappa[kappa_pm])*self.Alpha[kappa_pm] * (new_phi - phi[x])
+        for i in range(self.Shape.size):
+            shift = np.zeros(self.Shape.size)
+            shift[i] = 1
+            Delta_Kin_term += (new_phi - phi[x]) * (phi[tuple(((x + shift)%self.Shape).astype(int))] + phi[tuple(((x - shift)%self.Shape).astype(int))])
+        return (Delta_Nothing_term + Delta_Alpha_term - 2*self.Kappa[kappa_pm] * Delta_Kin_term - Delta_J_term) * np.prod(self.Spacing)
 
     # Method to calculate the two-point correlator of the current field
     def two_Point_Correlator(self, t, phi = None):
@@ -159,3 +162,37 @@ class Lattice:
         TPE = np.array([Utility.bootstrap(TPC[t,:], 10000) for t in range(len(t_s))])
         TPE = TPE / TPC.mean(axis = 1)[0]
         return TP, TPE
+
+    def calc_crazy_stuff(self):
+        # https://www.wolframalpha.com/input/?i=solve+for+%5Ckappa+%5Ckappa*%282*d+%2B+%28m*a%29%5E2%29+%3D+%281+-+%5Clambda*%28%5Ckappa*a%5E2%29%5E2%2F3%29
+        d, a, m, l = self.Shape.size, np.square(self.Spacing[0]), self.M_squared, self.Lambda       
+        if l == 0:
+            self.Kappa = np.ones(2) / (a*m + 2*d)
+            self.Alpha = np.ones(2) * l * np.square(self.Kappa[0] * a) / ( 6 * d )
+        else:
+            self.Kappa = np.zeros(2)
+            self.Kappa[0] = - ( 3*a*m + np.sqrt( 3*np.square(a)*( 4*l + 3*np.square(m) ) + 36*a*d*m + 36*np.square(d) ) +6*d ) / ( 2*np.square(a)*l )
+            self.Kappa[1] = - ( 3*a*m - np.sqrt( 3*np.square(a)*( 4*l + 3*np.square(m) ) + 36*a*d*m + 36*np.square(d) ) +6*d ) / ( 2*np.square(a)*l )
+            self.Alpha = np.zeros(2)
+            self.Alpha[0] = l * np.square(self.Kappa[0] * a) / ( 6 * d )
+            self.Alpha[1] = l * np.square(self.Kappa[1] * a) / ( 6 * d )
+
+    # Method to perform 1 sweep over the lattice
+    def Sweep_ALT(self, Dmax, Steps=1, Save=False, sampling="uniform"):
+        for x, _ in np.ndenumerate(self.Phi): # Sweep over all lattice sites
+            for _ in range(Steps): # Steps times
+
+                # Execute the Delta_Phi sampling
+                if sampling == "uniform": Delta_Phi = np.random.uniform(-Dmax, Dmax)
+                elif sampling == "gauss": Delta_Phi = np.random.randn() * Dmax
+                else: raise Exception("\'" + str(sampling) + "\' is not a valid sampling type")
+
+                # Determine the change in the action
+                Delta_S = self.Delta_S_ALT(x, Delta_Phi)
+
+                # Perform the Metropolis-Hastings accept-reject step
+                if Delta_S < 0 or np.random.uniform(0,1) <= np.exp(-Delta_S):
+                    self.Phi[x] += Delta_Phi
+                    self.Accepted += 1
+                self.Tried += 1
+        if Save: self.History.append(self.Phi.copy())
