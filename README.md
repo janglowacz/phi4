@@ -18,3 +18,5 @@ The 'Lat_Corr_Gen.py' file contains code to analyze lattices for correlator anal
 
 The 'Lat_Meff_B_Gen.py' file contains code to generate lattices for symmetry breaking in dependence fo musquared analysis. \
 The 'Lat_Meff_B_Gen.py' file contains code to analyze lattices for symmetry breaking in dependence fo musquared analysis.
+
+The 'Lat_Acceptance_Ana.py' file contains code to optimize the acceptance.
