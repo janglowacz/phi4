@@ -14,7 +14,7 @@ Tracker = Utility.Tracker()
 verbose = True
 
 Lattice = Theory.Lattice()
-Lattice.load("Corr")
+Lattice.load("Corr/Corr")
 
 t_s = np.linspace(0, Lattice.Size[0]//2, Lattice.Shape[0]//2+1)
 TPC = np.zeros([t_s.size, len(Lattice.History)])

@@ -30,6 +30,7 @@ class Lattice:
             else: raise Exception("Error in determining lattice dimensions")
             self.Phi = np.zeros(self.Shape)
             self.M_squared, self.Lambda =kwargs["Parameters"]
+            self.Dmax = np.sqrt(Lattice.Spacing[0]*0.3)
             print("Lattice initialized with parameters")
 
     # Method to save the lattice into a file
@@ -42,7 +43,8 @@ class Lattice:
                 "Spacing":      self.Spacing.tolist(),
                 "Phi":          self.Phi.tolist(),
                 "M_squared":    self.M_squared,
-                "Lamda":        self.Lambda}
+                "Lamda":        self.Lambda,
+                "Dmax":         self.Dmax}
         with open(filename + ".json", mode = "w") as f:
             f.write(json.dumps(DATA))
         print("Lattice saved to file \'"+filename+".json\'")
@@ -60,17 +62,18 @@ class Lattice:
         self.Spacing    = np.array(DATA["Spacing"])
         self.Phi        = np.array(DATA["Phi"])
         self.M_squared  = DATA["M_squared"]
-        self.Lamda      = DATA["Lamda"]    
+        self.Lamda      = DATA["Lamda"]
+        self.Dmax       = DATA["Dmax"]  
         print("Lattice initialized from file \'"+filename+".json\'")
         
     # Method to perform 1 sweep over the lattice
-    def Sweep(self, Dmax, J=0, Steps=1, Save=False, sampling="uniform"):
+    def Sweep(self, J=0, Steps=1, Save=False, sampling="uniform"):
         for x, _ in np.ndenumerate(self.Phi): # Sweep over all lattice sites
             for _ in range(Steps): # Steps times
 
                 # Execute the Delta_Phi sampling
-                if sampling == "uniform": Delta_Phi = np.random.uniform(-Dmax, Dmax)
-                elif sampling == "gauss": Delta_Phi = np.random.randn() * Dmax
+                if sampling == "uniform": Delta_Phi = np.random.uniform(-self.Dmax, self.Dmax)
+                elif sampling == "gauss": Delta_Phi = np.random.randn() * self.Dmax
                 else: raise Exception("\'" + str(sampling) + "\' is not a valid sampling type")
 
                 # Determine the change in the action
@@ -193,13 +196,13 @@ class Lattice:
             self.Alpha[1] = l * np.square(self.Kappa[1]) / ( 6 )
 
     # Method to perform 1 sweep over the lattice
-    def Sweep_ALT(self, Dmax, Steps=1, Save=False, sampling="uniform"):
+    def Sweep_ALT(self, Steps=1, Save=False, sampling="uniform"):
         for x, _ in np.ndenumerate(self.Phi): # Sweep over all lattice sites
             for _ in range(Steps): # Steps times
 
                 # Execute the Delta_Phi sampling
-                if sampling == "uniform": Delta_Phi = np.random.uniform(-Dmax, Dmax)
-                elif sampling == "gauss": Delta_Phi = np.random.randn() * Dmax
+                if sampling == "uniform": Delta_Phi = np.random.uniform(-self.Dmax, self.Dmax)
+                elif sampling == "gauss": Delta_Phi = np.random.randn() * self.Dmax
                 else: raise Exception("\'" + str(sampling) + "\' is not a valid sampling type")
 
                 # Determine the change in the action
@@ -213,13 +216,13 @@ class Lattice:
         if Save: self.History.append(self.Phi.copy())
 
     # Method to perform 1 sweep over the lattice
-    def Sweep_NEW(self, Dmax, Steps=1, Save=False, sampling="uniform"):
+    def Sweep_NEW(self, Steps=1, Save=False, sampling="uniform"):
         for x, _ in np.ndenumerate(self.Phi): # Sweep over all lattice sites
             for _ in range(Steps): # Steps times
 
                 # Execute the Delta_Phi sampling
-                if sampling == "uniform": Delta_Phi = np.random.uniform(-Dmax, Dmax)
-                elif sampling == "gauss": Delta_Phi = np.random.randn() * Dmax
+                if sampling == "uniform": Delta_Phi = np.random.uniform(-self.Dmax, self.Dmax)
+                elif sampling == "gauss": Delta_Phi = np.random.randn() * self.Dmax
                 else: raise Exception("\'" + str(sampling) + "\' is not a valid sampling type")
 
                 # Determine the change in the action

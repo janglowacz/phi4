@@ -10,11 +10,16 @@ saveformat = '.pdf'
 
 verbose = True
 
-Settings = [[1,1,0],[1,1,0.1],[-0.5,1,0],[-0.5,1,0.1],[-1,1,0],[-1,1,0.1]]
+Settings = [[-1,0,0.1]]
+Settings1 = [[1,1,0.1],[0,1,0.1],[-1,1,0.1],[-2,1,0.1]]
+Settings2 = [[-1,-1,0.1],[-1,1,0.1],[-1,1,0.1],[-1,2,0.1]]
+Settings3 = [[1,-1,0.1],[1,0,0.1],[1,1,0.1],[1,2,0.1]]
+Settings4 = [[-1,1,0],[-1,1,0.1],[-1,1,0.5],[-1,1,1]]
+Settings5 = [[-1,0,0.1],[-1,5,0.1],[-1,25,0.1],[-1,125,0.1]]
 
 Lambda = 1
 
-for Setting in Settings:
+for Setting in Settings5:
     print()
     Lattice = Theory.Lattice(Parameters = Setting[:-1], Size = [10,10,10,10], Spacing = [1,1,1,1])
     Lattice.History = []
@@ -25,7 +30,6 @@ for Setting in Settings:
     Sweeps = 1000
 
     Steps = 1
-    Sweep_Dmax = np.sqrt(Lattice.Spacing[0])
 
     print("Size:",Lattice.Size)
     print("Spacing:",Lattice.Spacing)
@@ -35,7 +39,7 @@ for Setting in Settings:
     Tracker.START()
     for k in range(Sweeps):
         Tracker.FLUSH(k, Sweeps)
-        Lattice.Sweep(Sweep_Dmax, Steps = Steps, Save = True)
+        Lattice.Sweep(Steps = Steps, Save = True)
     Tracker.FLUSH_Final(Sweeps, Sweeps)
     print()
 

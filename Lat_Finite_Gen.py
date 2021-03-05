@@ -10,7 +10,7 @@ saveformat = '.pdf'
 
 verbose = True
 
-start = 20
+start = 3
 stop = 20
 
 N_s = np.linspace(start, stop,  stop - start + 1)
@@ -27,7 +27,6 @@ for N in N_s:
     Sweeps = 100
 
     Steps = 5
-    Sweep_Dmax = np.sqrt(Lattice.Spacing[0])
 
     print("Size:",Lattice.Size)
     print("Spacing:",Lattice.Spacing)
@@ -38,7 +37,7 @@ for N in N_s:
     Tracker.START()
     for k in range(Thermalization):
         Tracker.FLUSH(k, Thermalization)
-        Lattice.Sweep(Sweep_Dmax, Steps = Steps)
+        Lattice.Sweep(Steps = Steps)
     Tracker.FLUSH_Final(Thermalization, Thermalization)
     print()
 
@@ -46,7 +45,7 @@ for N in N_s:
     Tracker.START()
     for k in range(Sweeps):
         Tracker.FLUSH(k, Sweeps)
-        Lattice.Sweep(Sweep_Dmax, Steps = Steps, Save = True)
+        Lattice.Sweep(Steps = Steps, Save = True)
     Tracker.FLUSH_Final(Sweeps, Sweeps)
     print()
 

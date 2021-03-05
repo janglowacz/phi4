@@ -15,11 +15,10 @@ Lattice.Phi = np.ones(Lattice.Shape)*0
 
 Tracker = Utility.Tracker()
 
-Thermalization = 20
+Thermalization = 40
 Sweeps = 100
 
 Steps = 5
-Sweep_Dmax = np.sqrt(Lattice.Spacing[0])
 
 print("Size:",Lattice.Size)
 print("Spacing:",Lattice.Spacing)
@@ -31,7 +30,7 @@ print("Thermalization:")
 Tracker.START()
 for k in range(Thermalization):
     Tracker.FLUSH(k, Thermalization)
-    Lattice.Sweep(Sweep_Dmax, Steps = Steps)
+    Lattice.Sweep(Steps = Steps)
 Tracker.FLUSH_Final(Thermalization, Thermalization)
 print()
 
@@ -39,10 +38,10 @@ print("Sweeps:")
 Tracker.START()
 for k in range(Sweeps):
     Tracker.FLUSH(k, Sweeps)
-    Lattice.Sweep(Sweep_Dmax, Steps = Steps, Save = True)
+    Lattice.Sweep(Steps = Steps, Save = True)
 Tracker.FLUSH_Final(Sweeps, Sweeps)
 print()
 
 print("Acceptance:",Lattice.Accepted/Lattice.Tried)
 
-Lattice.save("Corr")
+Lattice.save("Corr/Corr")

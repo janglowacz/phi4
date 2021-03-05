@@ -28,7 +28,7 @@ for Lambda in Lambda_s:
 
     for M_squared in M_squared_s:
         Lattice_s.append(Theory.Lattice())
-        Lattice_s[-1].load("Meff_B/Mu_"+str(M_squared)+"_Lambda_"+str(Lambda))
+        Lattice_s[-1].load("Meff_B_2/Mu_"+str(M_squared)+"_Lambda_"+str(Lambda))
 
         TP, TPE = Lattice_s[-1].two_Point_Corr_Full(Tracker = Tracker)
         TP_s.append(TP)
