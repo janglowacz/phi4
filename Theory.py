@@ -64,7 +64,7 @@ class Lattice:
         print("Lattice initialized from file \'"+filename+".json\'")
         
     # Method to perform 1 sweep over the lattice
-    def Sweep(self, Dmax, Steps=1, Save=False, sampling="uniform"):
+    def Sweep(self, Dmax, J=0, Steps=1, Save=False, sampling="uniform"):
         for x, _ in np.ndenumerate(self.Phi): # Sweep over all lattice sites
             for _ in range(Steps): # Steps times
 
@@ -74,7 +74,7 @@ class Lattice:
                 else: raise Exception("\'" + str(sampling) + "\' is not a valid sampling type")
 
                 # Determine the change in the action
-                Delta_S = self.Delta_S(x, Delta_Phi)
+                Delta_S = self.Delta_S(x, Delta_Phi, J=J)
 
                 # Perform the Metropolis-Hastings accept-reject step
                 if Delta_S < 0 or np.random.uniform(0,1) <= np.exp(-Delta_S):
