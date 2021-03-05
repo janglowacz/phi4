@@ -30,7 +30,7 @@ class Lattice:
             else: raise Exception("Error in determining lattice dimensions")
             self.Phi = np.zeros(self.Shape)
             self.M_squared, self.Lambda =kwargs["Parameters"]
-            self.Dmax = np.sqrt(Lattice.Spacing[0]*0.3)
+            self.Dmax = np.sqrt(self.Spacing[0]*0.3)
             print("Lattice initialized with parameters")
 
     # Method to save the lattice into a file
