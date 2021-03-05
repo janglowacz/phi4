@@ -11,14 +11,14 @@ saveformat = '.pdf'
 verbose = True
 
 Lattice = Theory.Lattice(Parameters = [1,1], Size = [10,10,10,10], Spacing = [1,1,1,1])
-Lattice.Phi = np.ones(Lattice.Shape)*0
+Lattice.Phi = np.ones(Lattice.Shape)*0.1
 
 Tracker = Utility.Tracker()
 
-Thermalization = 40
-Sweeps = 100
+Thermalization = 50
+Sweeps = 50
 
-Steps = 5
+Steps = 4
 
 print("Size:",Lattice.Size)
 print("Spacing:",Lattice.Spacing)

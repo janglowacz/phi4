@@ -19,7 +19,7 @@ Settings5 = [[-1,0,0.1],[-1,5,0.1],[-1,25,0.1],[-1,125,0.1]]
 
 Lambda = 1
 
-for Setting in Settings5:
+for Setting in Settings1:
     print()
     Lattice = Theory.Lattice(Parameters = Setting[:-1], Size = [10,10,10,10], Spacing = [1,1,1,1])
     Lattice.History = []
@@ -27,7 +27,7 @@ for Setting in Settings5:
 
     Tracker = Utility.Tracker()
 
-    Sweeps = 1000
+    Sweeps = 350
 
     Steps = 1
 

@@ -10,8 +10,8 @@ saveformat = '.pdf'
 
 verbose = True
 
-start = 3
-stop = 20
+start = 6
+stop = 12
 
 N_s = np.linspace(start, stop,  stop - start + 1)
 
@@ -19,14 +19,14 @@ for N in N_s:
     print()
     Lattice = Theory.Lattice(Parameters = [1,1], Size = [N,N,N,N], Spacing = [1,1,1,1])
     Lattice.History = []
-    Lattice.Phi = np.ones(Lattice.Shape)*0
+    Lattice.Phi = np.ones(Lattice.Shape)*0.1
 
     Tracker = Utility.Tracker()
 
     Thermalization = 50
-    Sweeps = 100
+    Sweeps = 50
 
-    Steps = 5
+    Steps = 4
 
     print("Size:",Lattice.Size)
     print("Spacing:",Lattice.Spacing)

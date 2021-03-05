@@ -32,12 +32,12 @@ for j in range(len(Settings)):
         Phi_mean = np.array([phi.mean() for phi in Lattice_s[-1].History])
         Phi_mean_s.append(np.abs(Phi_mean))
 
-    plt.figure(figsize=(9,6))
+    plt.figure(figsize=(6,4))
     i = -1
     for Setting in Settings[j]:
         i += 1
         if j == 0:
-            plt.plot(np.linspace(0,300,301), Phi_mean_s[i][:301], label = r"$\mu = $"+str(Setting[0]))
+            plt.plot(np.linspace(0,300,301), Phi_mean_s[i][:301], label = r"$\mu^2 = $"+str(Setting[0]))
         elif j == 1:
             plt.plot(np.linspace(0,300,301), Phi_mean_s[i][:301], label = r"$\lambda = $"+str(Setting[1]))
             plt.ylim(top=3.6, bottom=-0.1)
@@ -47,6 +47,7 @@ for j in range(len(Settings)):
             plt.plot(np.linspace(0,300,301), Phi_mean_s[i][:301], label = r"$\phi_\mathrm{ini} = $"+str(Setting[2]))
         elif j == 4:
             plt.plot(np.linspace(0,300,301), Phi_mean_s[i][:301], label = r"$\lambda = $"+str(Setting[1]))
+            plt.ylim(top=1.5, bottom=-0.1)
         else: raise Exception("Something went horribly wrong")
     plt.legend(loc = "best")
     plt.grid()
