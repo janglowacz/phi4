@@ -17,6 +17,9 @@ verbose = True
 def func(x, a, b):
     return a*x + b/6 * np.power(x,3)
 
+def integrated_func(x, a, b):
+    return a/2*np.power(x,2) + b/24*np.power(x,4)
+
 J_s = np.linspace(-6,6,25)
 N = 6
 
@@ -37,8 +40,8 @@ for J in J_s:
     TP_s.append(TP)
     TPE_s.append(TPE)
 
-    Meff_s.append(np.log(TP[1] / TP[0]))
-    Meff_E_s.append(np.sqrt(np.square(TPE[1] / TP[1]) + np.square(TPE[0] / TP[0])))
+    Meff_s.append(-np.log(TP[1]))
+    Meff_E_s.append(TPE[1]/TP[1])
 
 Phi_mean_s = np.array(Phi_mean_s)
 Phi_mean_E_s = np.array(Phi_mean_E_s)
@@ -47,20 +50,8 @@ Meff_E_s = np.array(Meff_E_s)
 
 # ====================================================================================
 
-M_AVG = (Meff_s / np.square(Meff_E_s)).sum() / (1 / np.square(Meff_E_s)).sum()
-M_ERR = np.sqrt(Meff_s.size / (1 / np.square(Meff_E_s)).sum())
-
-plt.figure(figsize=(9,6))
-plt.errorbar(J_s, Meff_s, yerr = Meff_E_s, fmt = "x", label = r"$m_\mathrm{eff}$", color = "C0", capsize = 3)
-plt.hlines(M_AVG, J_s.min(), J_s.max(), label = r"average $m_\mathrm{eff}$", color = "C1")
-plt.axhspan(M_AVG - M_ERR, M_AVG + M_ERR, alpha = 0.2 , color = "C1")
-plt.legend(loc = "best")
-plt.grid()
-plt.xlabel(r"$J$")
-plt.ylabel(r"$m_\mathrm{eff}$")
-plt.savefig(f"Scary_plot_M{saveformat}")
-plt.show()
-plt.close()
+M_AVG = Meff_s[12]
+M_ERR = Meff_E_s[12]
 
 # ====================================================================================
 
@@ -68,13 +59,22 @@ par, cov = so.curve_fit(func, Phi_mean_s, J_s, [1,1])
 
 x = np.linspace(-3,3,1000)
 
-plt.plot(Phi_mean_s, J_s, "X", label="measurement", color="C0")
+plt.errorbar(Phi_mean_s, J_s, xerr = Phi_mean_E_s, fmt = "x", label="measurement", color="C0", capsize = 3)
 plt.plot(x, func(x, *par), label="fit", color="C1")
 plt.legend(loc="best")
 plt.grid()
-plt.xlabel(r"$<\phi>$")
+plt.xlabel(r"$\langle\phi\rangle$")
 plt.ylabel("J")
 plt.savefig(f"Scary_plot_J{saveformat}")
+plt.show()
+plt.close()
+
+plt.plot(x, integrated_func(x, *par), label="integrated fit", color="C1")
+plt.legend(loc="best")
+plt.grid()
+plt.xlabel(r"$\langle\phi\rangle$")
+plt.ylabel("Effective Potential")
+plt.savefig(f"Scary_plot_integral_J{saveformat}")
 plt.show()
 plt.close()
 
@@ -87,5 +87,5 @@ L, L_E = b*np.square(Z), np.sqrt(np.square(np.square(Z))*b_v + np.square(b*2*Z*Z
 
 print("Results:")
 print(f"Renormalized Mass M = {M_AVG} +/- {M_ERR}")
-print(f"Renormalized Field Strength Z = {Z} +/- {Z_E}")
+print(f"Field Strength renormalization factor Z = {Z} +/- {Z_E}")
 print(f"Renormalized Coupling Constant Lambda = {L} +/- {L_E}")
