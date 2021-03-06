@@ -43,7 +43,7 @@ class Lattice:
                 "Spacing":      self.Spacing.tolist(),
                 "Phi":          self.Phi.tolist(),
                 "M_squared":    self.M_squared,
-                "Lamda":        self.Lambda,
+                "Lambda":       self.Lambda,
                 "Dmax":         self.Dmax}
         with open(filename + ".json", mode = "w") as f:
             f.write(json.dumps(DATA))
@@ -62,7 +62,7 @@ class Lattice:
         self.Spacing    = np.array(DATA["Spacing"])
         self.Phi        = np.array(DATA["Phi"])
         self.M_squared  = DATA["M_squared"]
-        self.Lamda      = DATA["Lamda"]
+        self.Lambda     = DATA["Lambda"]
         self.Dmax       = DATA["Dmax"]  
         print("Lattice initialized from file \'"+filename+".json\'")
         
@@ -148,8 +148,9 @@ class Lattice:
         return RET / self.Shape[0]
 
     # Method to calculate the average and error of all possible two point correlators
-    def two_Point_Corr_Full(self, Tracker = None):
-        t_s = np.linspace(0, self.Size[0]//2, self.Shape[0]//2+1)
+    def two_Point_Corr_Full(self, Tracker = None, Full = True):
+        if Full: t_s = np.linspace(0, self.Size[0]//2, self.Shape[0]//2+1)
+        else: t_s = np.linspace(0, 1, 2)
         TPC = np.zeros([t_s.size, len(self.History)])
         if not Tracker == None:
             runs = len(self.History)*len(t_s)
@@ -234,3 +235,11 @@ class Lattice:
                     self.Accepted += 1
                 self.Tried += 1
         if Save: self.History.append(self.Phi.copy())
+
+    def Expectation_Value(self, phi = None):
+        if type(phi) == np.ndarray:
+            return phi.mean(), None
+        else:
+            expect = np.array([phi.mean() for phi in self.History])
+            error = Utility.bootstrap(expect, 10000)
+            return expect.mean(), error
