@@ -165,7 +165,8 @@ class Lattice:
         TP = TPC.mean(axis = 1)
         TP = TP / TPC.mean(axis = 1)[0]
         TPE = np.array([Utility.bootstrap(TPC[t,:], 10000) for t in range(len(t_s))])
-        TPE = TPE / TPC.mean(axis = 1)[0]
+        TPE = np.sqrt(np.square(TPE[0] * TP / np.square(TPC.mean(axis = 1)[0])) + np.square(TPE / TPC.mean(axis = 1)[0]))
+        TPE[0] = 0
         return TP, TPE
 
     def calc_crazy_stuff(self):
