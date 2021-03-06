@@ -26,20 +26,13 @@ for N in N_s:
     Lattice_s.append(Theory.Lattice())
     Lattice_s[-1].load("Finite_Size/Test_"+dim+"_N_"+str(N))
 
-    TP, TPE = Lattice_s[-1].two_Point_Corr_Full(Tracker = Tracker)
-    TP_s.append(TP)
-    TPE_s.append(TPE)
+    TP, TPE = Lattice_s[-1].two_Point_Corr_Full(Tracker = Tracker, Full = False)
 
-    Meff_s.append(np.log(TP[:-1] / TP[1:]))
-    Meff_E_s.append(np.sqrt(np.square(TPE[:-1] / TP[:-1]) + np.square(TPE[1:] / TP[1:])))
+    Meff_s.append(-np.log(TP[1]))
+    Meff_E_s.append(TPE[1]/TP[1])
 
-AVG_Range = 1
+AVG = (Meff_s / np.square(Meff_E_s)).sum() / (1 / np.square(Meff_E_s)).sum()
+ERR = np.sqrt(Meff_s.size / (1 / np.square(Meff_E_s)).sum())
 
-MEFF = np.array([M[:AVG_Range].mean() for M in Meff_s])
-MEFF_E = np.array([np.sqrt(np.square(M_E[:AVG_Range]).mean()) for M_E in Meff_E_s])
-
-AVG = (MEFF / np.square(MEFF_E)).sum() / (1 / np.square(MEFF_E)).sum()
-ERR = np.sqrt(MEFF.size / (1 / np.square(MEFF_E)).sum())
-
-np.save("Lat_Finite_"+dim+"_MEFF",MEFF)
-np.save("Lat_Finite_"+dim+"_MEFF_E",MEFF_E)
+np.save("Lat_Finite_"+dim+"_MEFF",Meff_s)
+np.save("Lat_Finite_"+dim+"_MEFF_E",Meff_E_s)

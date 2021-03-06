@@ -29,9 +29,9 @@ Tracker.FLUSH_Final(runs, runs)
 
 TP = TPC.mean(axis = 1)
 TP = TP / TPC.mean(axis = 1)[0]
- 
 TPE = np.array([Utility.bootstrap(TPC[t,:], 10000) for t in range(len(t_s))])
-TPE = TPE / TPC.mean(axis = 1)[0]
+TPE = np.sqrt(np.square(TPE[0] * TP / np.square(TPC.mean(axis = 1)[0])) + np.square(TPE / TPC.mean(axis = 1)[0]))
+TPE[0] = 0
 
 def func(x,a):
     return np.exp(-a * x)
@@ -40,9 +40,9 @@ def func(x,a):
 plt.figure(figsize=(9,6))
 plt.errorbar(t_s, TP, yerr = TPE, fmt = "x", label="values", capsize=3)
 
-par, cov = so.curve_fit(func, t_s, TP, [1], sigma = TPE, absolute_sigma=True)
+par, cov = so.curve_fit(func, t_s[1:], TP[1:], [1], sigma = TPE[1:], absolute_sigma=True)
 
-X = np.sum(np.square((TP - func(t_s,par))/TPE))
+X = np.sum(np.square((TP[1:] - func(t_s[1:],par))/TPE[1:]))
 print()
 print("Chi Squared:",X)
 print("n.d.f.:",t_s.size - 1)
@@ -55,7 +55,7 @@ plt.legend(loc="best")
 plt.grid()
 plt.yscale("log")
 plt.xlabel(r"$t$")
-plt.ylabel(r"$C(t)$")
+plt.ylabel(r"$C_2(t)/C_2(0)$")
 plt.savefig("Lat_Corr.pdf")
 plt.show()
 plt.close()

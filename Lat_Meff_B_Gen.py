@@ -10,22 +10,23 @@ saveformat = '.pdf'
 
 verbose = True
 
-M_squared_s = np.linspace(-3,1,17)
+M_squared_s = np.linspace(-7,3,41)
 
-Lambda = 1
+Lambda = 50
 
 for M_squared in M_squared_s:
     print()
-    Lattice = Theory.Lattice(Parameters = [M_squared, Lambda], Size = [6,6,6,6], Spacing = [1,1,1,1])
+    print("Lambda:", Lambda)
+    Lattice = Theory.Lattice(Parameters = [M_squared, Lambda], Size = [10,10,10,10], Spacing = [1,1,1,1])
     Lattice.History = []
     Lattice.Phi = np.ones(Lattice.Shape)*0.1
 
     Tracker = Utility.Tracker()
 
-    Thermalization = 40
+    Thermalization = 50
     Sweeps = 50
 
-    Steps = 1
+    Steps = 4
 
     print("Size:",Lattice.Size)
     print("Spacing:",Lattice.Spacing)
