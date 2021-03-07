@@ -3,6 +3,9 @@ The code is written in python3.
 The packages 'numpy' and 'scipy' are reqired to run the programs.
 Certain programs require folders with specific names to be present in the same location the program is executed in.
 
+>> The folder 'Classic.zip' contains all code based upon the classic parametrization.
+>> The folder 'Alternative.zip' cotnains all code based upon the alternative parametrization.
+
 => The 'Theory.py' file contains the Lattice object with saving and loading methods and the implementation of the monte carlo simulation sweep and $\Delta S$. \
 It also contains as a set of measurement methods and is imported by all other code.
 
