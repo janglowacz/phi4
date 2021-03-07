@@ -12,7 +12,10 @@ At default settings for the Lattice size its runtime is quite long. \
 -> The 'Lat_Therm_Ana.py' file contains code to analyze the generated lattices for thermalization analysis.
 
 -> The 'Lat_Finite_Gen.py' file contains code to generate lattices for finite size analysis. \
+Its runtime is extremely long. \
+It therefore is recommended to not run it for all lattice sizes and to run multiple versions with different lattice size ranges in parallel. \
 -> The 'Lat_Finite_Ana.py' file contains code to analyze lattices for finite size analysis. \
+At default settings for the Lattice size its runtime is quite long. \
 -> The 'Lat_Finite_Plot.py' file contains code to plot data for finite size analysis.
 
 -> The 'Lat_Corr_Gen.py' file contains code to generate lattices for correlator analysis. \
