@@ -3,6 +3,7 @@ The code is written in python3. \
 The packages 'numpy' and 'scipy' are reqired to run the programs. \
 Certain programs require folders with specific names to be present in the same location the program is executed in.
 
+|> The file 'Phi4-Report.pdf' contains our report. \
 |> The folder 'Classic.zip' contains all code based upon the classic parametrization. \
 |> The folder 'Alternative.zip' cotnains all code based upon the alternative parametrization.
 
