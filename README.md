@@ -6,12 +6,13 @@ It also contains as a set of measurement methods and is imported by all other co
 -> The 'Lat_Acceptance_Ana.py' file contains code to optimize the acceptance of our simulation. \
 At default settings for the Lattice size its runtime is quite long.
 
+-> The 'Lat_Therm_Gen.py' file contains code to generate lattices for thermalization analysis. \
+To create all files used by the analysis program this file needs to be executed multiple times while changing the settings it runs on.
+-> The 'Lat_Therm_Gen.py' file contains code to analyze lattices for thermalization analysis.
+
 -> The 'Lat_Finite_Gen.py' file contains code to generate lattices for finite size analysis. \
 -> The 'Lat_Finite_Ana.py' file contains code to analyze lattices for finite size analysis. \
 -> The 'Lat_Finite_Plot.py' file contains code to plot data for finite size analysis.
-
--> The 'Lat_Therm_Gen.py' file contains code to generate lattices for thermalization analysis. \
--> The 'Lat_Therm_Gen.py' file contains code to analyze lattices for thermalization analysis.
 
 -> The 'Lat_Corr_Gen.py' file contains code to generate lattices for correlator analysis. \
 -> The 'Lat_Corr_Gen.py' file contains code to analyze lattices for correlator analysis.
