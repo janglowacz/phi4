@@ -6,6 +6,9 @@ Certain programs require folders with specific names to be present in the same l
 => The 'Theory.py' file contains the Lattice object with saving and loading methods and the implementation of the monte carlo simulation sweep and $\Delta S$. \
 It also contains as a set of measurement methods and is imported by all other code.
 
+=> The 'Lat_Vis.py' file contains code to verify the function of the algorithm.
+=> The 'Lat_Vis_2d.py' file contains code to visually inspect a 2d lattice.
+
 => The 'Lat_Acceptance_Ana.py' file contains code to optimize the acceptance of our simulation. \
 At default settings for the Lattice size its runtime is quite long.
 
