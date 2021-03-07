@@ -6,7 +6,7 @@ Certain programs require folders with specific names to be present in the same l
 |> The folder 'Classic.zip' contains all code based upon the classic parametrization. \
 |> The folder 'Alternative.zip' cotnains all code based upon the alternative parametrization.
 
-=> The 'Theory.py' file contains the Lattice object with saving and loading methods and the implementation of the monte carlo simulation sweep and $\Delta S$. \
+=> The 'Theory.py' and 'Theory_Alt.py' files contains the Lattice object with saving and loading methods and the implementation of the monte carlo simulation sweep and $\Delta S$. \
 It also contains as a set of measurement methods and is imported by all other code.
 
 => The 'Lat_Vis.py' file contains code to verify the function of the algorithm. \
